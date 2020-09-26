@@ -1,2 +1,2 @@
 # tugasPWDPB
-membuat CRUD sederhana
+tugas PWDPB
