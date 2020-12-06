@@ -1,0 +1,39 @@
+
+form{
+	width: 250px;
+	height: 200px;
+	border: 3px solid blue;
+	background-color: white;
+	margin-top: 200px;
+	margin-left: 40%;
+	border-radius: 10px;
+}
+h1{
+	font-size: 20px;
+	font-family: 'arial';
+	text-align: center;
+	color:black;
+}
+td{
+	position: center;
+	text-align: center;
+	padding-top: 5px;
+}
+label{
+	font-size: 20px;
+	font-family: arial;
+	color: black;
+}
+input{
+	border: 2px solid black;
+	border-radius: 5px;
+	color: black;
+}
+button{
+	background-color: blue;
+	border: 2px solid black;
+	color: white;
+	width: 60px;
+	height: 30px;
+	border-radius: 10px;
+}

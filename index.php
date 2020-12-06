@@ -1,193 +1,183 @@
 <?php
-    //Koneksi Database
-    $server = "localhost";
-    $user = "root";
-    $pass = "";
-    $database = "tdlatihan";
+   
+   session_start();
 
-    $koneksi = mysqli_connect($server, $user, $pass, $database)or die(mysqli_error($koneksi));
+    $koneksi = new mysqli ("localhost","root","","perpustakaan");
 
-    //jika tombol simpan di klik
-    if(isset($_POST['bsimpan']))
-    {
-        //pengujian apakah data akan di edit atau disimpan baru
-        if($_GET['hal'] == "edit")
-        {
-            //data akan di edit
-            $edit = mysqli_query($koneksi, "UPDATE tdzm set 
-                                              nis = '$_POST[tnis]',
-                                              nama = '$_POST[tnama]',
-                                              alamat = '$_POST[talamat]',
-                                              prodi = '$_POST[tprodi]'
-                                            WHERE id_dzm = '$_GET[id]'
-                                           ");
-            if($edit) //jika edit sukses    
-            {
-                echo "<script>
-                        alert('Edit Data Suksess!');
-                        document.location='index.php';
-                     </script>";
-            }     
-            else
-            {
-                echo "<script>
-                        alert('Edit Data Gagal!!');
-                        document.location='index.php';
-                     </script>"; 
-            }
-        }
-        else
-        {
-            //data akan disimpan baru
-            $simpan = mysqli_query($koneksi, "INSERT INTO tdzm (nis, nama, alamat, prodi)
-                                              VALUES ('$_POST[tnis]',
-                                                      '$_POST[tnama]',
-                                                      '$_POST[talamat]',
-                                                      '$_POST[tprodi]')
-                                        ");
-            if($simpan) //jika simpan sukses    
-            {
-                echo "<script>
-                        alert('Simpan Data Suksess!');
-                        document.location='index.php';
-                     </script>";
-            }     
-            else
-            {
-                echo "<script>
-                        alert('Simpan Data Gagal!!');
-                        document.location='index.php';
-                     </script>"; 
-            }  
-        }
+if ($_SESSION['admin'] || $_SESSION['user']) {
+        
+    
 
-
-                        
-    }
-
-    //pengujian jika tombol edit atau hapus di klik
-    if(isset($_GET['hal']))
-    {
-        //pengujian jika edit data
-        if($_GET['hal'] == "edit")
-        {
-            //tampilkan data yang akan di edit
-            $tampil = mysqli_query($koneksi, "SELECT * FROM tdzm WHERE id_dzm = '$_GET[id]' ");
-            $data = mysqli_fetch_array($tampil);
-            if($data)
-            {
-                //jika data ditemukan maka data ditampung ke dalam variabel
-                $vnis = $data['nis'];
-                $vnama = $data['nama'];
-                $valamat = $data['alamat'];
-                $vprodi = $data['prodi'];
-            }
-        }
-        else if ($_GET['hal'] == "hapus")
-        {
-            //persiapan hapus data
-            $hapus = mysqli_query($koneksi, "DELETE FROM tdzm WHERE id_dzm = '$_GET[id]' ");
-            if($hapus){
-                echo "<script>
-                        alert('Hapus Data Suksess!!');
-                        document.location='index.php';
-                     </script>";
-            }
-        }
-    }
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRUD BIODATA SISWA</title>
-    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+      <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Perpustakaan</title>
+	<!-- BOOTSTRAP STYLES-->
+    <link href="assets/css/bootstrap.css" rel="stylesheet" />
+     <!-- FONTAWESOME STYLES-->
+    <link href="assets/css/font-awesome.css" rel="stylesheet" />
+        <!-- CUSTOM STYLES-->
+    <link href="assets/css/custom.css" rel="stylesheet" />
+     <!-- GOOGLE FONTS-->
+   <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' />
+
+   <link href="assets/js/dataTables/dataTables.bootstrap.css" rel="stylesheet" />
 </head>
 <body>
-<div class="container">
-   <h1 class="text-center">CRUD BIODATA SISWA</h1>   
+    <div id="wrapper">
+        <nav class="navbar navbar-default navbar-cls-top " role="navigation" style="margin-bottom: 0">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="index.html">Perpustakaan</a> 
+            </div>
+  <div style="color: white;
+padding: 15px 50px 5px 50px;
+float: right;
+font-size: 16px;"> Last access : 30 May 2014 &nbsp; <a href="logout.php" class="btn btn-danger square-btn-adjust">Logout</a> </div>
+        </nav>   
+           <!-- /. NAV TOP  -->
+                <nav class="navbar-default navbar-side" role="navigation">
+            <div class="sidebar-collapse">
+                <ul class="nav" id="main-menu">
+				<li class="text-center">
+                    <img src="assets/img/find_user.png" class="user-image img-responsive"/>
+					</li>
+				
+					
+                    <li>
+                        <a  href="index.php"><i class="fa fa-dashboard fa-3x"></i> Dashboard</a>
+                    </li>
 
-<!-- ini awal curd form -->
-   <div class="card mt-8">
-     <div class="card-header bg-primary text-white">
-    Form Input Data Siswa
-     </div>
-     <div class="card-body">
-       <form method="post" action="">
-           <div class="form group">
-               <label>Nis</label>
-               <input type="text" name="tnis" value="<?=@$vnis?>" class="form-control" placeholder="Input Nis Anda Disini!" required>
-           </div>
-           <div class="form group">
-               <label>Nama</label>
-               <input type="text" name="tnama" value="<?=@$vnama?>" class="form-control" placeholder="Input Nama Anda Disini!" required>
-           </div>
-           <div class="form group">
-               <label>Alamat</label>
-               <textarea class="form-control" name="talamat" placeholder="Input Alamat Anda Disini!"><?=@$valamat?></textarea>
-           </div>
-           <div class="form group">
-               <label>Prodi</label>
-               <select class="form-control" name="tprodi">
-                   <option value="<?=@$vprodi?>"><?=@$vprodi?></option>
-                   <option value="X RPL">X RPL</option>
-                   <option value="XI RPL 1">XI RPL 1</option>
-                   <option value="XI RPL 2">XI RPL 2</option>
-               </select>
-           </div>
+                    <li>
+                        <a  href="?page=siswa"><i class="fa fa-laptop fa-3x"></i> Data Siswa</a>
+                    </li>
 
-           <button type="submit" class="btn btn-success mt-2" name="bsimpan">Simpan</button>
-           <button type="reset" class="btn btn-danger mt-2" name="breset">Kosongkan</button>
+                    <li>
+                        <a  href="?page=anggota"><i class="fa fa-laptop fa-3x"></i> Data Anggota Perpus</a>
+                    </li>
 
-       </form>
-     </div>
-   </div>
-<!-- akhir card form -->
+                    <li>
+                        <a  href="?page=buku"><i class="fa fa-table fa-3x"></i> Data Buku</a>
+                    </li>
 
-<!-- ini awal curd table -->
-<div class="card mt-8">
-     <div class="card-header bg-success text-white">
-    Daftar Siswa
-     </div>
-     <div class="card-body">
-       
-       <table class="table table-bordered table-striped">
-           <tr>
-               <th>No.</th>
-               <th>Nis</th>
-               <th>Nama</th>
-               <th>Alamat</th>
-               <th>Prodi</th>
-               <th>Aksi</th>
-           </tr>
-           <?php
-               $no = 1;
-               $tampil = mysqli_query($koneksi, "SELECT * from tdzm order by id_dzm desc")or die(mysqli_error($koneksi));
-               while($data = mysqli_fetch_array($tampil)) :
+                    <li>
+                        <a  href="?page=pinjam"><i class="fa fa-edit fa-3x"></i> Pinjam Buku</a>
+                    </li>
+                     	
+                </ul>
+               
+            </div>
+            
+        </nav>  
+        <!-- /. NAV SIDE  -->
+        <div id="page-wrapper" >
+            <div id="page-inner">
+                <div class="row">
+                    <div class="col-md-12">
+                     
+                     <?php
+                     
+                         $page = $_GET['page'];
+                         $aksi = $_GET['aksi'];
 
-           ?>
-           <tr>
-               <td><?=$no++;?></td>
-               <td><?=$data['nis']?></td>
-               <td><?=$data['nama']?></td>
-               <td><?=$data['alamat']?></td>
-               <td><?=$data['prodi']?></td>
-               <td>
-                   <a href="index.php?hal=edit&id=<?=$data['id_dzm']?>" class="btn btn-warning"> Edit </a>
-                   <a href="index.php?hal=hapus&id=<?=$data['id_dzm']?>" onclick="return confirm('Apakah Yakin Ingin Menghapus Data Ini?')" class="btn btn-danger"> Hapus </a>
-               </td>
-           </tr>
-           <?php endwhile; //penutup perulangan while ?>
-       </table>
 
-     </div>
-   </div>
-<!-- akhir card table -->
+                         if ($page == "siswa") {
+                             if ($aksi == "") {
+                                 include "page/siswa/siswa.php";
+                             }elseif ($aksi== "tambah") {
+                                include "page/siswa/tambah.php";
+                             }elseif ($aksi== "ubah") {
+                                include "page/siswa/ubah.php";
+                             }elseif ($aksi== "hapus") {
+                                include "page/siswa/hapus.php";
+                             }
+                         }elseif ($page == "anggota" ) {
+                             if ($aksi == "") {
+                                 include "page/anggota/anggota.php";
+                             }elseif ($aksi== "tambah") {
+                                include "page/anggota/tambah.php";
+                             }elseif ($aksi== "ubah") {
+                                include "page/anggota/ubah.php";
+                             }elseif ($aksi== "hapus") {
+                                include "page/anggota/hapus.php";
+                             }
+                         }elseif ($page == "buku" ) {
+                            if ($aksi == "") {
+                                include "page/buku/buku.php";
+                             }elseif ($aksi== "tambah") {
+                                include "page/buku/tambah.php";
+                             }elseif ($aksi== "ubah") {
+                                include "page/buku/ubah.php";
+                             }elseif ($aksi== "hapus") {
+                                include "page/buku/hapus.php";
+                             }
+                         }elseif ($page == "pinjam" ) {
+                            if ($aksi == "") {
+                                include "page/pinjam/pinjam.php";
+                             }elseif ($aksi== "tambah") {
+                                 include "page/pinjam/tambah.php";
+                             }elseif ($aksi== "ubah") {
+                                include "page/pinjam/ubah.php";
+                            }elseif ($aksi== "hapus") {
+                                include "page/pinjam/hapus.php";
+                            }
+                         }elseif ($page=="") {
+                             
+                              include "home.php";
 
-</div>
+                         }
+                     ?>
+                       
+                    </div>
+                </div>
+                 <!-- /. ROW  -->
+                 <hr />
+               
+    </div>
+             <!-- /. PAGE INNER  -->
+            </div>
+         <!-- /. PAGE WRAPPER  -->
+        </div>
+     <!-- /. WRAPPER  -->
+    <!-- SCRIPTS -AT THE BOTOM TO REDUCE THE LOAD TIME-->
+    <!-- JQUERY SCRIPTS -->
+    <script src="assets/js/jquery-1.10.2.js"></script>
+      <!-- BOOTSTRAP SCRIPTS -->
+    <script src="assets/js/bootstrap.min.js"></script>
+    <!-- METISMENU SCRIPTS -->
+    <script src="assets/js/jquery.metisMenu.js"></script>
+      <!-- CUSTOM SCRIPTS -->
+    
 
-<script type="text/javascript" src="js/bootstrap.min.js"></script>
+
+    <script src="assets/js/dataTables/jquery.dataTables.js"></script>
+    <script src="assets/js/dataTables/dataTables.bootstrap.js"></script>
+        <script>
+            $(document).ready(function () {
+                $('#dataTables-example').dataTable();
+            });
+    </script>
+         <!-- CUSTOM SCRIPTS -->
+    <script src="assets/js/custom.js"></script>
+    
+    
+   
 </body>
 </html>
+
+<?php
+
+    }else{
+        header("location:login.php");
+    }
+
+?>
